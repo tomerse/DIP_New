@@ -6,6 +6,9 @@
 #include <opencv2\core\core.hpp>
 #include <opencv2\highgui\highgui.hpp>
 #include <iostream>
+#include "ideal.cpp"
+#include "Gaussian.cpp"
+#include "Butterworth.cpp"
 //#include <opencv2\core\mat.hpp>
 
 #include "GUI.h"
@@ -89,7 +92,6 @@ int GUI::getSettings()
 void GUI::createImages(int filter, int settings, int d0, int n)
 {
 	Mat org = getOrgImage();
-
 
 	CreateFourierImg(org, settings, d0, n);
 }
