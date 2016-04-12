@@ -1,13 +1,24 @@
 #pragma once
 
-namespace Ass1 {
 
+#include <opencv2\opencv.hpp>
+#include <cstdio>
+#include <Windows.h>
+#include <msclr\marshal_cppstd.h>
+
+#include <opencv2\core\core.hpp>
+#include <opencv2\highgui\highgui.hpp>
+#include <iostream>
+
+namespace Ass1 {
+	
 	using namespace System;
 	using namespace System::ComponentModel;
 	using namespace System::Collections;
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
+	using namespace cv;
 
 	/// <summary>
 	/// Summary for GUI
@@ -15,6 +26,14 @@ namespace Ass1 {
 	public ref class GUI : public System::Windows::Forms::Form
 	{
 	public:
+		Mat& getOrgImage();
+		void ApplyChanges();
+		int getFilter();
+		int getSettings();
+		void createImages(int filter, int settings, int d0, int n);
+		void CreateFourierImg(Mat& org, int settings, int d0, int n);
+		void CreateFilterImg();
+		void CreateFourierInverseImg();
 		GUI(void)
 		{
 			InitializeComponent();
@@ -63,7 +82,6 @@ namespace Ass1 {
 	private: System::Windows::Forms::Label^  n_min;
 	private: System::Windows::Forms::Label^  label10;
 	private: System::Windows::Forms::TrackBar^  tb_n;
-
 
 
 	private:
@@ -290,6 +308,7 @@ namespace Ass1 {
 			this->bt_filter->TabIndex = 10;
 			this->bt_filter->Text = L"Filter";
 			this->bt_filter->UseVisualStyleBackColor = true;
+			this->bt_filter->Click += gcnew System::EventHandler(this, &GUI::bt_filter_Click);
 			// 
 			// panel3
 			// 
@@ -420,5 +439,8 @@ namespace Ass1 {
 
 		}
 #pragma endregion
-	};
+	private: System::Void bt_filter_Click(System::Object^  sender, System::EventArgs^  e) {
+				 ApplyChanges();
+			 }
+};
 }
