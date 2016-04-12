@@ -31,13 +31,15 @@ void DrawCVImage(System::Windows::Forms::Control^ control, cv::Mat& colorImage)
 
 int main(int argc, char **argv)
 {
-	/*
+	
 	if( argc != 2)
     {
      cout <<" Usage: display_image ImageToLoadAndDisplay" << endl;
      return -1;
     }
-	*/
+
+	const char* filename = argv[1];
+	
 
 	
 	GUI^ win = gcnew GUI();
@@ -45,6 +47,7 @@ int main(int argc, char **argv)
 	win->pb_org->Image->FromHbitmap(ptr);*/
 	//DrawCVImage(win->pb_org,hBitmap);
 	
+	//win->pb_org->ImageLocation=(System::String^)argv[1];
 	win->pb_org->ImageLocation="C:\\Users\\Tomer\\Desktop\\New folder\\pic.jpg";
 	win->ShowDialog();
 }
@@ -96,7 +99,7 @@ Mat& GUI::getOrgImage()
 	Mat org;
 	System::String ^path = pb_org->ImageLocation;
 	std::string unmanagedPath = msclr::interop::marshal_as<std::string>(path);
-	org = imread(unmanagedPath, CV_LOAD_IMAGE_COLOR);  
+	org = imread(unmanagedPath, CV_LOAD_IMAGE_GRAYSCALE);  
 
 	/*cvtColor(image, image, CV_BGRA2RGBA);
 	HBITMAP  hBitmap = CreateBitmap(image.cols, image.rows, 1, 32, image.data);*/
