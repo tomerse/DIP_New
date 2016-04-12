@@ -27,6 +27,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Butterworth.cpp" />
+    <ClCompile Include="Distance.cpp" />
     <ClCompile Include="Gaussian.cpp" />
     <ClCompile Include="GUI.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</CompileAsManaged>
