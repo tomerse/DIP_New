@@ -7,10 +7,12 @@ using namespace cv;
 
 static Mat CreateGaussianLowFilter(Mat fourier, int D0)
 {
-
+		Mat ans;
+	return ans;
 }
 
 static Mat CreateGaussianHighFilter(Mat fourier, int D0)
 {
-
+		Mat ans;
+	return ans;
 }

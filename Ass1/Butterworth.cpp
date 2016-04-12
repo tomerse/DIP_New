@@ -7,10 +7,12 @@ using namespace cv;
 
 static Mat CreateButterworthLowFilter(Mat fourier, int D0, int n)
 {
-
+		Mat ans;
+	return ans;
 }
 
 static Mat CreateButterworthHighFilter(Mat fourier, int D0, int n)
 {
-
+		Mat ans;
+	return ans;
 }

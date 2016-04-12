@@ -93,7 +93,9 @@ void GUI::createImages(int filter, int settings, int d0, int n)
 {
 	Mat org = getOrgImage();
 
-	CreateFourierImg(org, settings, d0, n);
+	Mat fourier = CreateFourierImg(org);
+
+	Mat filtered = CreateFilterImg(fourier, filter, settings, d0, n);
 }
 
 Mat GUI::getOrgImage()
@@ -117,7 +119,7 @@ Mat GUI::getOrgImage()
 	return org;
 }
 
-void GUI::CreateFourierImg(Mat org, int settings, int d0, int n2)
+Mat GUI::CreateFourierImg(Mat org)
 {
 	Mat padded;                            //expand input image to optimal size
     int m = getOptimalDFTSize( org.rows );
@@ -166,14 +168,58 @@ void GUI::CreateFourierImg(Mat org, int settings, int d0, int n2)
     imshow("Input Image"       , org   );    // Show the result
     imshow("spectrum magnitude", magI);
     waitKey();
+
+	return magI;
 	
 }
-void GUI::CreateFilterImg()
+
+Mat GUI::CreateFilterImg(const Mat fourier, int filter, int settings, int d0, int n)
 {
+	Mat filterImg;
+	if (filter == 1) //low
+	{
+		if (settings == 1) //low-ideal
+		{
+			filterImg = CreateIdealLowFilter(fourier, d0);
+		}
+		else
+			if (settings == 2) //low-butterworth
+			{
+				filterImg = CreateButterworthLowFilter(fourier, d0, n);
+			}
+			else
+				if (settings == 3) //low-gaussian
+				{
+					filterImg = CreateGaussianLowFilter(fourier, d0);
+				}
+	}
+	else
+		if (filter == 2) //high
+		{
+			if (settings == 1) //high-ideal
+			{
+				filterImg = CreateIdealHighFilter(fourier, d0);
+			}
+			else
+				if (settings == 2) //high-butterworth
+				{
+					filterImg = CreateButterworthHighFilter(fourier, d0, n);
+				}
+				else
+					if (settings == 3) //high-gaussian
+					{
+						filterImg = CreateGaussianHighFilter(fourier, d0);
+					}
+		}
+
+	return fourier*filterImg;
 
 }
-void GUI::CreateFourierInverseImg()
+
+Mat GUI::CreateFourierInverseImg(Mat img)
 {
+	Mat shar;
+	return shar;
 }
 
 
