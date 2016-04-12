@@ -26,12 +26,12 @@ namespace Ass1 {
 	public ref class GUI : public System::Windows::Forms::Form
 	{
 	public:
-		Mat& getOrgImage();
+		Mat getOrgImage();
 		void ApplyChanges();
 		int getFilter();
 		int getSettings();
 		void createImages(int filter, int settings, int d0, int n);
-		void CreateFourierImg(Mat& org, int settings, int d0, int n);
+		void CreateFourierImg(Mat org, int settings, int d0, int n);
 		void CreateFilterImg();
 		void CreateFourierInverseImg();
 		GUI(void)
@@ -290,6 +290,7 @@ namespace Ass1 {
 			this->rb_ideal->TabStop = true;
 			this->rb_ideal->Text = L"Ideal";
 			this->rb_ideal->UseVisualStyleBackColor = true;
+			this->rb_ideal->Checked = true;
 			// 
 			// label6
 			// 
