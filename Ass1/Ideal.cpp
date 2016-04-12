@@ -10,31 +10,28 @@
 #include "Distance.cpp"
 using namespace cv;
 
+	//MessageBox( NULL, "shar", "", MB_OK );
 
 static Mat CreateIdealLowFilter(Mat fourier, int D0)
 {
-	//MessageBox( NULL, "shar", "", MB_OK );
-	int length = fourier.rows;
-	int height = fourier.cols;
-	Point center = (length/2, height/2);
+	int height = fourier.rows;
+	int length = fourier.cols;
+	Point center = Point(length/2, height/2);
 
 	D0=100;
-	Mat *ans = new Mat(length,height,CV_8UC1);
-	/*std::string str = "center is x: %d, y: %d", center.x,center.y; 
-	MessageBox( NULL, (LPCSTR)str, "", MB_OK );*/
-	for (int i = 0; i < length; i++)
+	Mat *ans = new Mat(height,length,CV_8UC1);
+	for (int i = 0; i < height; i++)
 	{
-		for (int j = 0; j < height; j++)
+		for (int j = 0; j < length; j++)
 		{
-			Point cur = (i,j);
 			if (D(i,j,center) > D0)
-				ans->at<uchar>(i,j) = 255;
+				ans->at<uchar>(i,j) = 0;
 			else
-				ans->at<uchar>(i,j) = 255;
+				ans->at<uchar>(i,j) = 1;
 		}
 	}
 
-	 imshow("Filtered Image"       , *ans   );    // Show the result
+	 imshow("ideal low filter"       , *ans   );    // Show the result
    
 
 	return *ans;
@@ -42,6 +39,25 @@ static Mat CreateIdealLowFilter(Mat fourier, int D0)
 
 static Mat CreateIdealHighFilter(Mat fourier, int D0)
 {
-		Mat ans;
-	return ans;
+	int height = fourier.rows;
+	int length = fourier.cols;
+	Point center = Point(length/2, height/2);
+
+	D0=100;
+	Mat *ans = new Mat(height,length,CV_8UC1);
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < length; j++)
+		{
+			if (D(i,j,center) > D0)
+				ans->at<uchar>(i,j) = 1;
+			else
+				ans->at<uchar>(i,j) = 0;
+		}
+	}
+
+	 imshow("ideal high filter"       , *ans   );    // Show the result
+   
+
+	return *ans;
 }

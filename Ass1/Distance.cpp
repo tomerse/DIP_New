@@ -8,5 +8,5 @@ using namespace cv;
 
 static int D(int i, int j, Point p)
 {
-	return sqrt(pow(i-p.x,2)+pow(j-p.y,2));
+	return sqrt(pow(i-p.y,2)+pow(j-p.x,2));
 }

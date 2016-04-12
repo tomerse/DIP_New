@@ -92,10 +92,13 @@ int GUI::getSettings()
 void GUI::createImages(int filter, int settings, int d0, int n)
 {
 	Mat org = getOrgImage();
-
+	imshow("Input Image"       , org   );    // Show the result
+    
 	Mat fourier = CreateFourierImg(org);
-
+	imshow("spectrum magnitude", fourier);
 	Mat filtered = CreateFilterImg(fourier, filter, settings, d0, n);
+
+	imshow("Filtered Image"       , filtered   ); 
 
 	//CreateFourierInverseImg(fourier);
 }
@@ -167,8 +170,8 @@ Mat GUI::CreateFourierImg(Mat org)
     normalize(magI, magI, 0, 1, CV_MINMAX); // Transform the matrix with float values into a
                                             // viewable image form (float between values 0 and 1).
 
-    imshow("Input Image"       , org   );    // Show the result
-    imshow("spectrum magnitude", magI);
+    //imshow("Input Image"       , org   );    // Show the result
+    //imshow("spectrum magnitude", magI);
     //waitKey();
 
 	return magI;
@@ -214,7 +217,26 @@ Mat GUI::CreateFilterImg(const Mat fourier, int filter, int settings, int d0, in
 					}
 		}
 
-	return fourier*filterImg;
+
+
+	int height = fourier.rows;
+	int length = fourier.cols;
+
+	Mat *ans = new Mat(height,length,CV_8UC1);
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < length; j++)
+		{
+			
+				ans->at<uchar>(i,j) = fourier.at<uchar>(i,j)*filterImg.at<uchar>(i,j);
+
+		}
+	}
+
+
+
+
+		return *ans;
 
 }
 
