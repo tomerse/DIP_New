@@ -55,13 +55,13 @@ namespace Ass1 {
 		}
 	public: System::Windows::Forms::PictureBox^  pb_org;
 	protected: 
-	private: System::Windows::Forms::PictureBox^  pb_fourier;
-	private: System::Windows::Forms::PictureBox^  pb_filter;
-	private: System::Windows::Forms::PictureBox^  pb_fourier_inv;
-	private: System::Windows::Forms::Label^  label1;
-	private: System::Windows::Forms::Label^  label2;
-	private: System::Windows::Forms::Label^  label3;
-	private: System::Windows::Forms::Label^  label4;
+
+
+
+
+
+
+
 	private: System::Windows::Forms::Panel^  panel1;
 	private: System::Windows::Forms::RadioButton^  rb_high;
 	private: System::Windows::Forms::RadioButton^  rb_low;
@@ -98,13 +98,6 @@ namespace Ass1 {
 		void InitializeComponent(void)
 		{
 			this->pb_org = (gcnew System::Windows::Forms::PictureBox());
-			this->pb_fourier = (gcnew System::Windows::Forms::PictureBox());
-			this->pb_filter = (gcnew System::Windows::Forms::PictureBox());
-			this->pb_fourier_inv = (gcnew System::Windows::Forms::PictureBox());
-			this->label1 = (gcnew System::Windows::Forms::Label());
-			this->label2 = (gcnew System::Windows::Forms::Label());
-			this->label3 = (gcnew System::Windows::Forms::Label());
-			this->label4 = (gcnew System::Windows::Forms::Label());
 			this->panel1 = (gcnew System::Windows::Forms::Panel());
 			this->rb_high = (gcnew System::Windows::Forms::RadioButton());
 			this->rb_low = (gcnew System::Windows::Forms::RadioButton());
@@ -126,9 +119,6 @@ namespace Ass1 {
 			this->label10 = (gcnew System::Windows::Forms::Label());
 			this->tb_n = (gcnew System::Windows::Forms::TrackBar());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pb_org))->BeginInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pb_fourier))->BeginInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pb_filter))->BeginInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pb_fourier_inv))->BeginInit();
 			this->panel1->SuspendLayout();
 			this->panel2->SuspendLayout();
 			this->panel3->SuspendLayout();
@@ -142,78 +132,19 @@ namespace Ass1 {
 			this->pb_org->ImageLocation = L"";
 			this->pb_org->Location = System::Drawing::Point(26, 30);
 			this->pb_org->Name = L"pb_org";
-			this->pb_org->Size = System::Drawing::Size(196, 226);
+			this->pb_org->Size = System::Drawing::Size(130, 27);
 			this->pb_org->TabIndex = 0;
 			this->pb_org->TabStop = false;
-			// 
-			// pb_fourier
-			// 
-			this->pb_fourier->Location = System::Drawing::Point(251, 30);
-			this->pb_fourier->Name = L"pb_fourier";
-			this->pb_fourier->Size = System::Drawing::Size(196, 226);
-			this->pb_fourier->TabIndex = 1;
-			this->pb_fourier->TabStop = false;
-			// 
-			// pb_filter
-			// 
-			this->pb_filter->Location = System::Drawing::Point(472, 30);
-			this->pb_filter->Name = L"pb_filter";
-			this->pb_filter->Size = System::Drawing::Size(196, 226);
-			this->pb_filter->TabIndex = 2;
-			this->pb_filter->TabStop = false;
-			// 
-			// pb_fourier_inv
-			// 
-			this->pb_fourier_inv->Location = System::Drawing::Point(693, 30);
-			this->pb_fourier_inv->Name = L"pb_fourier_inv";
-			this->pb_fourier_inv->Size = System::Drawing::Size(196, 226);
-			this->pb_fourier_inv->TabIndex = 3;
-			this->pb_fourier_inv->TabStop = false;
-			// 
-			// label1
-			// 
-			this->label1->AutoSize = true;
-			this->label1->Location = System::Drawing::Point(104, 9);
-			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(42, 13);
-			this->label1->TabIndex = 4;
-			this->label1->Text = L"Original";
-			// 
-			// label2
-			// 
-			this->label2->AutoSize = true;
-			this->label2->Location = System::Drawing::Point(324, 9);
-			this->label2->Name = L"label2";
-			this->label2->Size = System::Drawing::Size(39, 13);
-			this->label2->TabIndex = 5;
-			this->label2->Text = L"Fourier";
-			// 
-			// label3
-			// 
-			this->label3->AutoSize = true;
-			this->label3->Location = System::Drawing::Point(545, 9);
-			this->label3->Name = L"label3";
-			this->label3->Size = System::Drawing::Size(29, 13);
-			this->label3->TabIndex = 6;
-			this->label3->Text = L"Filter";
-			// 
-			// label4
-			// 
-			this->label4->AutoSize = true;
-			this->label4->Location = System::Drawing::Point(755, 9);
-			this->label4->Name = L"label4";
-			this->label4->Size = System::Drawing::Size(77, 13);
-			this->label4->TabIndex = 7;
-			this->label4->Text = L"Inverse Fourier";
+			this->pb_org->Visible = false;
 			// 
 			// panel1
 			// 
 			this->panel1->Controls->Add(this->rb_high);
 			this->panel1->Controls->Add(this->rb_low);
 			this->panel1->Controls->Add(this->label5);
-			this->panel1->Location = System::Drawing::Point(26, 282);
+			this->panel1->Location = System::Drawing::Point(26, 30);
 			this->panel1->Name = L"panel1";
-			this->panel1->Size = System::Drawing::Size(196, 100);
+			this->panel1->Size = System::Drawing::Size(196, 117);
 			this->panel1->TabIndex = 8;
 			// 
 			// rb_high
@@ -253,7 +184,7 @@ namespace Ass1 {
 			this->panel2->Controls->Add(this->rb_butter);
 			this->panel2->Controls->Add(this->rb_ideal);
 			this->panel2->Controls->Add(this->label6);
-			this->panel2->Location = System::Drawing::Point(251, 282);
+			this->panel2->Location = System::Drawing::Point(237, 30);
 			this->panel2->Name = L"panel2";
 			this->panel2->Size = System::Drawing::Size(196, 117);
 			this->panel2->TabIndex = 9;
@@ -283,6 +214,7 @@ namespace Ass1 {
 			// rb_ideal
 			// 
 			this->rb_ideal->AutoSize = true;
+			this->rb_ideal->Checked = true;
 			this->rb_ideal->Location = System::Drawing::Point(7, 29);
 			this->rb_ideal->Name = L"rb_ideal";
 			this->rb_ideal->Size = System::Drawing::Size(48, 17);
@@ -290,7 +222,6 @@ namespace Ass1 {
 			this->rb_ideal->TabStop = true;
 			this->rb_ideal->Text = L"Ideal";
 			this->rb_ideal->UseVisualStyleBackColor = true;
-			this->rb_ideal->Checked = true;
 			// 
 			// label6
 			// 
@@ -303,7 +234,7 @@ namespace Ass1 {
 			// 
 			// bt_filter
 			// 
-			this->bt_filter->Location = System::Drawing::Point(757, 330);
+			this->bt_filter->Location = System::Drawing::Point(709, 72);
 			this->bt_filter->Name = L"bt_filter";
 			this->bt_filter->Size = System::Drawing::Size(75, 23);
 			this->bt_filter->TabIndex = 10;
@@ -317,7 +248,7 @@ namespace Ass1 {
 			this->panel3->Controls->Add(this->D0_min);
 			this->panel3->Controls->Add(this->label8);
 			this->panel3->Controls->Add(this->tb_d0);
-			this->panel3->Location = System::Drawing::Point(472, 282);
+			this->panel3->Location = System::Drawing::Point(455, 30);
 			this->panel3->Name = L"panel3";
 			this->panel3->Size = System::Drawing::Size(196, 49);
 			this->panel3->TabIndex = 10;
@@ -362,7 +293,7 @@ namespace Ass1 {
 			this->panel4->Controls->Add(this->n_min);
 			this->panel4->Controls->Add(this->label10);
 			this->panel4->Controls->Add(this->tb_n);
-			this->panel4->Location = System::Drawing::Point(472, 350);
+			this->panel4->Location = System::Drawing::Point(455, 98);
 			this->panel4->Name = L"panel4";
 			this->panel4->Size = System::Drawing::Size(196, 49);
 			this->panel4->TabIndex = 11;
@@ -405,26 +336,16 @@ namespace Ass1 {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(907, 411);
+			this->ClientSize = System::Drawing::Size(816, 169);
 			this->Controls->Add(this->panel4);
 			this->Controls->Add(this->panel3);
 			this->Controls->Add(this->bt_filter);
 			this->Controls->Add(this->panel2);
 			this->Controls->Add(this->panel1);
-			this->Controls->Add(this->label4);
-			this->Controls->Add(this->label3);
-			this->Controls->Add(this->label2);
-			this->Controls->Add(this->label1);
-			this->Controls->Add(this->pb_fourier_inv);
-			this->Controls->Add(this->pb_filter);
-			this->Controls->Add(this->pb_fourier);
 			this->Controls->Add(this->pb_org);
 			this->Name = L"GUI";
 			this->Text = L"GUI";
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pb_org))->EndInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pb_fourier))->EndInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pb_filter))->EndInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pb_fourier_inv))->EndInit();
 			this->panel1->ResumeLayout(false);
 			this->panel1->PerformLayout();
 			this->panel2->ResumeLayout(false);
@@ -436,7 +357,6 @@ namespace Ass1 {
 			this->panel4->PerformLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->tb_n))->EndInit();
 			this->ResumeLayout(false);
-			this->PerformLayout();
 
 		}
 #pragma endregion

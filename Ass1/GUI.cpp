@@ -52,7 +52,10 @@ int main(int argc, char **argv)
 	
 	//win->pb_org->ImageLocation=(System::String^)argv[1];
 	win->pb_org->ImageLocation="C:\\Users\\Tomer\\Desktop\\New folder\\pic.jpg";
+	Mat org = win->getOrgImage();
+	imshow("Input Image"       , org   );
 	win->ShowDialog();
+  
 }
 
 
@@ -92,7 +95,7 @@ int GUI::getSettings()
 void GUI::createImages(int filter, int settings, int d0, int n)
 {
 	Mat org = getOrgImage();
-	imshow("Input Image"       , org   );    
+	//imshow("Input Image"       , org   );    
     
 	Mat fourier = CreateFourierImg(org);
 	imshow("spectrum magnitude", fourier);
