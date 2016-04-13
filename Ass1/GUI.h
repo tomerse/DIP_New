@@ -33,7 +33,7 @@ namespace Ass1 {
 		void createImages(int filter, int settings, int d0, int n);
 		Mat CreateFourierImg(Mat org);
 		Mat CreateFilterImg(Mat fourier, int filter, int settings, int d0, int n);
-		Mat CreateFourierInverseImg(Mat img);
+		Mat CreateFourierInverseImg(Mat filtered);
 		GUI(void)
 		{
 			InitializeComponent();

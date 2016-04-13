@@ -92,15 +92,16 @@ int GUI::getSettings()
 void GUI::createImages(int filter, int settings, int d0, int n)
 {
 	Mat org = getOrgImage();
-	imshow("Input Image"       , org   );    // Show the result
+	imshow("Input Image"       , org   );    
     
 	Mat fourier = CreateFourierImg(org);
 	imshow("spectrum magnitude", fourier);
-	Mat filtered = CreateFilterImg(fourier, filter, settings, d0, n);
 
+	Mat filtered = CreateFilterImg(fourier, filter, settings, d0, n);
 	imshow("Filtered Image"       , filtered   ); 
 
-	//CreateFourierInverseImg(fourier);
+	Mat fourierInverse =  CreateFourierInverseImg(filtered);
+	imshow("Fourier Inverse Image"       , fourierInverse   ); 
 }
 
 Mat GUI::getOrgImage()
@@ -240,12 +241,12 @@ Mat GUI::CreateFilterImg(const Mat fourier, int filter, int settings, int d0, in
 
 }
 
-Mat GUI::CreateFourierInverseImg(Mat org)
+Mat GUI::CreateFourierInverseImg(Mat filtered)
 {
 	Mat padded;                            //expand input image to optimal size
-    int m = getOptimalDFTSize( org.rows );
-    int n = getOptimalDFTSize( org.cols ); // on the border add zero values
-    copyMakeBorder(org, padded, 0, m - org.rows, 0, n - org.cols, BORDER_CONSTANT, Scalar::all(0));
+    int m = getOptimalDFTSize( filtered.rows );
+    int n = getOptimalDFTSize( filtered.cols ); // on the border add zero values
+    copyMakeBorder(filtered, padded, 0, m - filtered.rows, 0, n - filtered.cols, BORDER_CONSTANT, Scalar::all(0));
 
     Mat planes[] = {Mat_<float>(padded), Mat::zeros(padded.size(), CV_32F)};
     Mat complexI;
@@ -287,7 +288,7 @@ Mat GUI::CreateFourierInverseImg(Mat org)
                                             // viewable image form (float between values 0 and 1).
 
     //imshow("Input Image"       , org   );    // Show the result
-    imshow("Inverse Fourier", magI);
+    //imshow("Inverse Fourier", magI);
     //waitKey();
 
 	return magI;
