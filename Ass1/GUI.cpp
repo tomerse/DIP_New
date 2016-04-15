@@ -103,7 +103,7 @@ void GUI::createImages(int filter, int settings, int d0, int n)
 	Mat filtered = CreateFilterImg(fourier, filter, settings, d0, n);
 	imshow("Filtered Image"       , filtered   ); 
 
-	Mat fourierInverse =  CreateFourierInverseImg(filtered);
+	Mat fourierInverse =  CreateFourierInverseImg(fourier);
 	imshow("Fourier Inverse Image"       , fourierInverse   ); 
 }
 
@@ -246,6 +246,7 @@ Mat GUI::CreateFilterImg(const Mat fourier, int filter, int settings, int d0, in
 
 Mat GUI::CreateFourierInverseImg(Mat filtered)
 {
+	
 	Mat padded;                            //expand input image to optimal size
     int m = getOptimalDFTSize( filtered.rows );
     int n = getOptimalDFTSize( filtered.cols ); // on the border add zero values
@@ -295,6 +296,13 @@ Mat GUI::CreateFourierInverseImg(Mat filtered)
     //waitKey();
 
 	return magI;
+	
+
+	/*
+	 cv::Mat inverseTransform;
+        cv::dft(complexI, inverseTransform, cv::DFT_INVERSE|cv::DFT_REAL_OUTPUT);
+        normalize(inverseTransform, inverseTransform, 0, 1, CV_MINMAX);
+		return inverseTransform*/
 }
 
 

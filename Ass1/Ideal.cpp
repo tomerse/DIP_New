@@ -31,8 +31,7 @@ static Mat CreateIdealLowFilter(Mat fourier, int D0)
 		}
 	}
 
-	 imshow("ideal low filter"       , *ans   );    // Show the result
-   
+	imshow("ideal low filter"       , *ans   );    // Show the result  
 
 	return *ans;
 }
