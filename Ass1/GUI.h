@@ -82,6 +82,7 @@ namespace Ass1 {
 	private: System::Windows::Forms::Label^  n_min;
 	private: System::Windows::Forms::Label^  label10;
 	private: System::Windows::Forms::TrackBar^  tb_n;
+	private: System::Windows::Forms::Label^  label1;
 
 
 	private:
@@ -118,6 +119,7 @@ namespace Ass1 {
 			this->n_min = (gcnew System::Windows::Forms::Label());
 			this->label10 = (gcnew System::Windows::Forms::Label());
 			this->tb_n = (gcnew System::Windows::Forms::TrackBar());
+			this->label1 = (gcnew System::Windows::Forms::Label());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pb_org))->BeginInit();
 			this->panel1->SuspendLayout();
 			this->panel2->SuspendLayout();
@@ -161,6 +163,7 @@ namespace Ass1 {
 			// rb_low
 			// 
 			this->rb_low->AutoSize = true;
+			this->rb_low->Checked = true;
 			this->rb_low->Location = System::Drawing::Point(7, 32);
 			this->rb_low->Name = L"rb_low";
 			this->rb_low->Size = System::Drawing::Size(70, 17);
@@ -234,7 +237,7 @@ namespace Ass1 {
 			// 
 			// bt_filter
 			// 
-			this->bt_filter->Location = System::Drawing::Point(709, 72);
+			this->bt_filter->Location = System::Drawing::Point(707, 62);
 			this->bt_filter->Name = L"bt_filter";
 			this->bt_filter->Size = System::Drawing::Size(75, 23);
 			this->bt_filter->TabIndex = 10;
@@ -332,11 +335,21 @@ namespace Ass1 {
 			this->tb_n->Size = System::Drawing::Size(139, 45);
 			this->tb_n->TabIndex = 1;
 			// 
+			// label1
+			// 
+			this->label1->AutoSize = true;
+			this->label1->Location = System::Drawing::Point(657, 30);
+			this->label1->Name = L"label1";
+			this->label1->Size = System::Drawing::Size(190, 13);
+			this->label1->TabIndex = 12;
+			this->label1->Text = L"Click the Filter button to apply changes";
+			// 
 			// GUI
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(816, 169);
+			this->ClientSize = System::Drawing::Size(867, 169);
+			this->Controls->Add(this->label1);
 			this->Controls->Add(this->panel4);
 			this->Controls->Add(this->panel3);
 			this->Controls->Add(this->bt_filter);
@@ -357,6 +370,7 @@ namespace Ass1 {
 			this->panel4->PerformLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->tb_n))->EndInit();
 			this->ResumeLayout(false);
+			this->PerformLayout();
 
 		}
 #pragma endregion
