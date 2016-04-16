@@ -21,13 +21,13 @@ static Mat CreateGaussianLowFilter(Mat fourier, int D0)
 	int length = fourier.cols;
 	Point center = Point(length/2, height/2);
 
-	Mat *ans = new Mat(height,length,CV_8UC1);
-	for (int i = 0; i < height; i++)
+	Mat *ans = new Mat(height,length,CV_32F);
+	for (int i = 0; i < ans->rows; i++)
 	{
-		for (int j = 0; j < length; j++)
+		for (int j = 0; j < ans->cols; j++)
 		{	
 			double value = CalcGaussian(i,j,center,D0);
-			ans->at<uchar>(i,j) = value;
+			ans->at<float>(i,j) = value;
 		}
 	}
 

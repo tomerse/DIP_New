@@ -173,8 +173,8 @@ Mat GUI::CreateFourierImg(Mat org)
 
 	//magI is the presentation matrix, complexI is the working matrix
 	imshow("spectrum magnitude", magI);
-	//return complexI;
-	return magI;
+	return complexI;
+	//return magI;
 	
 }
 
@@ -233,11 +233,12 @@ Mat GUI::CreateFilterImg(const Mat fourier, int filter, int settings, int d0, in
 		}
 	}
 
+		
+
+
 		imshow("ans"       , *ans   ); 
-
-
-
-	return *ans;
+		return *ans;
+	
 
 }
 

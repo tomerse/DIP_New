@@ -18,7 +18,7 @@ static Mat CreateIdealLowFilter(Mat fourier, int D0)
 	int length = fourier.cols;
 	Point center = Point(length/2, height/2);
 
-	D0=100;
+	D0=10;
 	Mat *ans = new Mat(height,length,CV_32F);
 	for (int i = 0; i < ans->rows; i++)
 	{
@@ -42,11 +42,11 @@ static Mat CreateIdealHighFilter(Mat fourier, int D0)
 	int length = fourier.cols;
 	Point center = Point(length/2, height/2);
 
-	D0=100;
+	D0=10;
 	Mat *ans = new Mat(height,length,CV_32F);
-	for (int i = 0; i < height; i++)
+	for (int i = 0; i < ans->rows; i++)
 	{
-		for (int j = 0; j < length; j++)
+		for (int j = 0; j < ans->cols; j++)
 		{
 			if (D(i,j,center) > D0)
 				ans->at<float>(i,j) = 1;
