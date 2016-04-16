@@ -173,7 +173,8 @@ Mat GUI::CreateFourierImg(Mat org)
 
 	//magI is the presentation matrix, complexI is the working matrix
 	imshow("spectrum magnitude", magI);
-	return complexI;
+	//return complexI;
+	return magI;
 	
 }
 
@@ -216,7 +217,6 @@ Mat GUI::CreateFilterImg(const Mat fourier, int filter, int settings, int d0, in
 					}
 		}
 
-	imshow("Original filter"       , filterImg   ); 
 
 	int height = fourier.rows;
 	int length = fourier.cols;
@@ -228,11 +228,12 @@ Mat GUI::CreateFilterImg(const Mat fourier, int filter, int settings, int d0, in
 		for (int j = 0; j < ans->cols; j++)
 		{
 			
-				ans->at<uchar>(i,j) = fourier.at<uchar>(i,j)*filterImg.at<uchar>(i,j);
+				ans->at<float>(i,j) = fourier.at<float>(i,j)*filterImg.at<float>(i,j);
 
 		}
 	}
 
+		imshow("ans"       , *ans   ); 
 
 
 
