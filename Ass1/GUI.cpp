@@ -216,15 +216,16 @@ Mat GUI::CreateFilterImg(const Mat fourier, int filter, int settings, int d0, in
 					}
 		}
 
-
+	imshow("Original filter"       , filterImg   ); 
 
 	int height = fourier.rows;
 	int length = fourier.cols;
-
-	Mat *ans = new Mat(height,length,CV_8UC1);
-	for (int i = 0; i < height; i++)
+	
+	//Mat *ans = new Mat(height,length,CV_8UC1);
+	Mat *ans = new Mat(height,length,CV_32F);
+	for (int i = 0; i < ans->rows; i++)
 	{
-		for (int j = 0; j < length; j++)
+		for (int j = 0; j < ans->cols; j++)
 		{
 			
 				ans->at<uchar>(i,j) = fourier.at<uchar>(i,j)*filterImg.at<uchar>(i,j);
@@ -235,7 +236,7 @@ Mat GUI::CreateFilterImg(const Mat fourier, int filter, int settings, int d0, in
 
 
 
-		return *ans;
+	return *ans;
 
 }
 

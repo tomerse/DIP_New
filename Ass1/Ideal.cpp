@@ -20,14 +20,14 @@ static Mat CreateIdealLowFilter(Mat fourier, int D0)
 
 	D0=100;
 	Mat *ans = new Mat(height,length,CV_8UC1);
-	for (int i = 0; i < height; i++)
+	for (int i = 0; i < ans->rows; i++)
 	{
-		for (int j = 0; j < length; j++)
+		for (int j = 0; j < ans->cols; j++)
 		{
 			if (D(i,j,center) > D0)
 				ans->at<uchar>(i,j) = 0;
 			else
-				ans->at<uchar>(i,j) = 1;
+				ans->at<uchar>(i,j) = 255;
 		}
 	}
 
