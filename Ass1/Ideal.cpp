@@ -1,5 +1,4 @@
 
-
 #include <windows.h>
 #include <sstream>
 #include <iostream>
@@ -10,53 +9,39 @@
 #include "Distance.cpp"
 using namespace cv;
 
-	//MessageBox( NULL, "shar", "", MB_OK );
 
-static Mat CreateIdealLowFilter(Mat fourier, int D0)
+static Mat CreateIdealLowFilter(Size size, Point center, int D0)
 {
-	int height = fourier.rows;
-	int length = fourier.cols;
-	Point center = Point(length/2, height/2);
+	Mat ans(size, CV_32F);
 
-	D0=10;
-	Mat *ans = new Mat(height,length,CV_32F);
-	for (int i = 0; i < ans->rows; i++)
+	for (int i = 0; i < ans.rows; i++)
 	{
-		for (int j = 0; j < ans->cols; j++)
+		for (int j = 0; j < ans.cols; j++)
 		{
 			if (D(i,j,center) > D0)
-				ans->at<float>(i,j) = 0;
+				ans.at<float>(i,j) = 0;
 			else
-				ans->at<float>(i,j) = 1;
+				ans.at<float>(i,j) = 1;
 		}
 	}
 
-	imshow("ideal low filter"       , *ans   );    // Show the result  
-
-	return *ans;
+	return ans;
 }
 
-static Mat CreateIdealHighFilter(Mat fourier, int D0)
+static Mat CreateIdealHighFilter(Size size, Point center, int D0)
 {
-	int height = fourier.rows;
-	int length = fourier.cols;
-	Point center = Point(length/2, height/2);
+	Mat ans(size, CV_32F);
 
-	D0=10;
-	Mat *ans = new Mat(height,length,CV_32F);
-	for (int i = 0; i < ans->rows; i++)
+	for (int i = 0; i < ans.rows; i++)
 	{
-		for (int j = 0; j < ans->cols; j++)
+		for (int j = 0; j < ans.cols; j++)
 		{
 			if (D(i,j,center) > D0)
-				ans->at<float>(i,j) = 1;
+				ans.at<float>(i,j) = 1;
 			else
-				ans->at<float>(i,j) = 0;
+				ans.at<float>(i,j) = 0;
 		}
 	}
 
-	 imshow("ideal high filter"       , *ans   );    // Show the result
-   
-
-	return *ans;
+	return ans;
 }

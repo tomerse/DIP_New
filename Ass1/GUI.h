@@ -32,14 +32,15 @@ namespace Ass1 {
 		int getSettings();
 		void createImages(int filter, int settings, int d0, int n);
 		Mat CreateFourierImg(Mat org);
-		Mat CreateFilterImg(Mat fourier, int filter, int settings, int d0, int n);
-		Mat CreateFourierInverseImg(Mat filtered);
+		Mat CreateFilterImg(cv::Size size, int filter, int settings, int d0, int n);
+		Mat CreateFourierInverseImg(Mat fourier, Mat filtered);
+		int WidthPadded;
+		int HeightPadded;
 		GUI(void)
 		{
 			InitializeComponent();
-			//
-			//TODO: Add the constructor code here
-			//
+			WidthPadded = 0;
+			HeightPadded = 0;
 		}
 
 	protected:
@@ -73,15 +74,15 @@ namespace Ass1 {
 	private: System::Windows::Forms::Label^  label6;
 	private: System::Windows::Forms::Button^  bt_filter;
 	private: System::Windows::Forms::Panel^  panel3;
-	private: System::Windows::Forms::Label^  D0_max;
-	private: System::Windows::Forms::Label^  D0_min;
+	public: System::Windows::Forms::Label^  D0_max;
+	public: System::Windows::Forms::Label^  D0_min;
 	private: System::Windows::Forms::Label^  label8;
-	private: System::Windows::Forms::TrackBar^  tb_d0;
+	public: System::Windows::Forms::TrackBar^  tb_d0;
 	private: System::Windows::Forms::Panel^  panel4;
-	private: System::Windows::Forms::Label^  n_max;
-	private: System::Windows::Forms::Label^  n_min;
+	public: System::Windows::Forms::Label^  n_max;
+	public: System::Windows::Forms::Label^  n_min;
 	private: System::Windows::Forms::Label^  label10;
-	private: System::Windows::Forms::TrackBar^  tb_n;
+	public: System::Windows::Forms::TrackBar^  tb_n;
 	private: System::Windows::Forms::Label^  label1;
 
 
@@ -261,9 +262,9 @@ namespace Ass1 {
 			this->D0_max->AutoSize = true;
 			this->D0_max->Location = System::Drawing::Point(155, 32);
 			this->D0_max->Name = L"D0_max";
-			this->D0_max->Size = System::Drawing::Size(31, 13);
+			this->D0_max->Size = System::Drawing::Size(25, 13);
 			this->D0_max->TabIndex = 5;
-			this->D0_max->Text = L"1000";
+			this->D0_max->Text = L"600";
 			// 
 			// D0_min
 			// 
@@ -272,7 +273,7 @@ namespace Ass1 {
 			this->D0_min->Name = L"D0_min";
 			this->D0_min->Size = System::Drawing::Size(13, 13);
 			this->D0_min->TabIndex = 4;
-			this->D0_min->Text = L"0";
+			this->D0_min->Text = L"1";
 			// 
 			// label8
 			// 
@@ -286,9 +287,12 @@ namespace Ass1 {
 			// tb_d0
 			// 
 			this->tb_d0->Location = System::Drawing::Point(40, 2);
+			this->tb_d0->Maximum = 600;
+			this->tb_d0->Minimum = 1;
 			this->tb_d0->Name = L"tb_d0";
 			this->tb_d0->Size = System::Drawing::Size(139, 45);
 			this->tb_d0->TabIndex = 1;
+			this->tb_d0->Value = 1;
 			// 
 			// panel4
 			// 
@@ -306,9 +310,9 @@ namespace Ass1 {
 			this->n_max->AutoSize = true;
 			this->n_max->Location = System::Drawing::Point(155, 32);
 			this->n_max->Name = L"n_max";
-			this->n_max->Size = System::Drawing::Size(31, 13);
+			this->n_max->Size = System::Drawing::Size(19, 13);
 			this->n_max->TabIndex = 5;
-			this->n_max->Text = L"1000";
+			this->n_max->Text = L"10";
 			// 
 			// n_min
 			// 
@@ -317,7 +321,7 @@ namespace Ass1 {
 			this->n_min->Name = L"n_min";
 			this->n_min->Size = System::Drawing::Size(13, 13);
 			this->n_min->TabIndex = 4;
-			this->n_min->Text = L"0";
+			this->n_min->Text = L"1";
 			// 
 			// label10
 			// 
@@ -331,9 +335,11 @@ namespace Ass1 {
 			// tb_n
 			// 
 			this->tb_n->Location = System::Drawing::Point(40, 2);
+			this->tb_n->Minimum = 1;
 			this->tb_n->Name = L"tb_n";
 			this->tb_n->Size = System::Drawing::Size(139, 45);
 			this->tb_n->TabIndex = 1;
+			this->tb_n->Value = 5;
 			// 
 			// label1
 			// 

@@ -9,26 +9,15 @@
 #include "ideal.cpp"
 #include "Gaussian.cpp"
 #include "Butterworth.cpp"
-//#include <opencv2\core\mat.hpp>
 
 #include "GUI.h"
 using namespace Ass1;
 using namespace cv;
 using namespace std;
-	using namespace System::Drawing::Imaging;
-	using namespace System::Drawing;
+using namespace System::Drawing::Imaging;
+using namespace System::Drawing;
 
 
-
-
-void DrawCVImage(System::Windows::Forms::Control^ control, cv::Mat& colorImage)
-{
-    System::Drawing::Graphics^ graphics = control->CreateGraphics();
-    System::IntPtr ptr(colorImage.ptr());
-    System::Drawing::Bitmap^ b = gcnew System::Drawing::Bitmap(colorImage.cols, colorImage.rows, colorImage.step, System::Drawing::Imaging::PixelFormat::Format24bppRgb, ptr);
-    System::Drawing::RectangleF rect(0, 0, control->Width, control->Height);
-    graphics->DrawImage(b, rect);
-}
 
 
 
@@ -49,16 +38,14 @@ int main(int argc, char **argv)
 	
 	//win->pb_org->ImageLocation=(System::String^)argv[1];
 	win->pb_org->ImageLocation="C:\\Users\\Tomer\\Desktop\\New folder\\lena.jpg";
+	win->tb_d0->Value = (win->tb_d0->Maximum -  win->tb_d0->Minimum)/2;
+	win->tb_n->Value = (win->tb_n->Maximum -  win->tb_n->Minimum)/2;
+
 	Mat org = win->getOrgImage();
 	imshow("Input Image"       , org   );
 	win->ShowDialog();
   
 }
-
-
-
-
-
 
 void GUI::ApplyChanges()
 {
@@ -91,17 +78,23 @@ int GUI::getSettings()
 
 void GUI::createImages(int filter, int settings, int d0, int n)
 {
-	Mat org = getOrgImage();
-	imshow("Input Image"       , org   );    
+	Mat org = getOrgImage();   
+	
+	WidthPadded=org.cols*2;
+	HeightPadded=org.rows*2;
+	
+	int M = getOptimalDFTSize( org.rows );
 
 	Mat fourier = CreateFourierImg(org);
 
-	Mat filtered = CreateFilterImg(fourier, filter, settings, d0, n);
-	imshow("Filtered Image"       , filtered   ); 
+	int height = fourier.rows;
+	int width = fourier.cols;
+	cv::Size size = cv::Size(width, height);
 
-	Mat fourierInverse =  CreateFourierInverseImg(filtered);
+	Mat filtered = CreateFilterImg(size, filter, settings, d0, n);
+
+	Mat fourierInverse =  CreateFourierInverseImg(fourier,filtered);
 	imshow("Inverse Transform Image"       , fourierInverse   ); 
-
 
 }
 
@@ -122,10 +115,12 @@ Mat GUI::getOrgImage()
 
 Mat GUI::CreateFourierImg(Mat org)
 {
+	
 	Mat padded;                            //expand input image to optimal size
     int m = getOptimalDFTSize( org.rows );
     int n = getOptimalDFTSize( org.cols ); // on the border add zero values
-    copyMakeBorder(org, padded, 0, m - org.rows, 0, n - org.cols, BORDER_CONSTANT, Scalar::all(0));
+	copyMakeBorder(org, padded, 0, m - org.rows, 0, n - org.cols, BORDER_CONSTANT, Scalar::all(0));
+    //copyMakeBorder(org, padded, 0, HeightPadded - org.rows, 0, WidthPadded - org.cols, BORDER_CONSTANT, Scalar::all(0));
 
     Mat planes[] = {Mat_<float>(padded), Mat::zeros(padded.size(), CV_32F)};
     Mat complexI;
@@ -144,7 +139,7 @@ Mat GUI::CreateFourierImg(Mat org)
 
     // crop the spectrum, if it has an odd number of rows or columns
     magI = magI(Rect(0, 0, magI.cols & -2, magI.rows & -2));
-
+	
     // rearrange the quadrants of Fourier image  so that the origin is at the image center
     int cx = magI.cols/2;
     int cy = magI.rows/2;
@@ -162,40 +157,38 @@ Mat GUI::CreateFourierImg(Mat org)
     q1.copyTo(tmp);                    // swap quadrant (Top-Right with Bottom-Left)
     q2.copyTo(q1);
     tmp.copyTo(q2);
-
+	
     normalize(magI, magI, 0, 1, CV_MINMAX); // Transform the matrix with float values into a
                                             // viewable image form (float between values 0 and 1).
 
-    //imshow("Input Image"       , org   );    // Show the result
-    //imshow("spectrum magnitude", magI);
-    //waitKey();
 
-
-	//magI is the presentation matrix, complexI is the working matrix
-	imshow("spectrum magnitude", magI);
+	imshow("Fourier Transform", magI);
 	return complexI;
 	//return magI;
-	
+
 }
 
-Mat GUI::CreateFilterImg(const Mat fourier, int filter, int settings, int d0, int n)
+Mat GUI::CreateFilterImg(cv::Size size, int filter, int settings, int d0, int n)
 {
 	Mat filterImg;
+	
+	cv::Point center = cv::Point(size.width/2, size.height/2);
+
 	if (filter == 1) //low
 	{
 		if (settings == 1) //low-ideal
 		{
-			filterImg = CreateIdealLowFilter(fourier, d0);
+			filterImg = CreateIdealLowFilter(size, center, d0);
 		}
 		else
 			if (settings == 2) //low-butterworth
 			{
-				filterImg = CreateButterworthLowFilter(fourier, d0, n);
+				filterImg = CreateButterworthLowFilter(size, center, d0, n);
 			}
 			else
 				if (settings == 3) //low-gaussian
 				{
-					filterImg = CreateGaussianLowFilter(fourier, d0);
+					filterImg = CreateGaussianLowFilter(size, center, d0);
 				}
 	}
 	else
@@ -203,51 +196,68 @@ Mat GUI::CreateFilterImg(const Mat fourier, int filter, int settings, int d0, in
 		{
 			if (settings == 1) //high-ideal
 			{
-				filterImg = CreateIdealHighFilter(fourier, d0);
+				filterImg = CreateIdealHighFilter(size, center, d0);
 			}
 			else
 				if (settings == 2) //high-butterworth
 				{
-					filterImg = CreateButterworthHighFilter(fourier, d0, n);
+					filterImg = CreateButterworthHighFilter(size, center, d0, n);
 				}
 				else
 					if (settings == 3) //high-gaussian
 					{
-						filterImg = CreateGaussianHighFilter(fourier, d0);
+						filterImg = CreateGaussianHighFilter(size, center, d0);
 					}
 		}
 
-
-	int height = fourier.rows;
-	int length = fourier.cols;
-	
-	//Mat *ans = new Mat(height,length,CV_8UC1);
-	Mat *ans = new Mat(height,length,CV_32F);
-	for (int i = 0; i < ans->rows; i++)
-	{
-		for (int j = 0; j < ans->cols; j++)
-		{
-			
-				ans->at<float>(i,j) = fourier.at<float>(i,j)*filterImg.at<float>(i,j);
-
-		}
-	}
-
 		
+		imshow("Filter", filterImg);
 
+		normalize(filterImg, filterImg, 0, 1, CV_MINMAX);
+		Mat padded;
+		copyMakeBorder(filterImg, padded, 0, size.height - filterImg.rows, 0, size.width - filterImg.cols, BORDER_CONSTANT, Scalar::all(0));
+		Mat planes[] = { Mat_<float>(padded), Mat::zeros(padded.size(), CV_32F) };
+		Mat complexImg;
+		merge(planes, 2, complexImg);
 
-		imshow("ans"       , *ans   ); 
-		return *ans;
-	
+		return complexImg;
 
 }
 
-Mat GUI::CreateFourierInverseImg(Mat filtered)
+
+Mat GUI::CreateFourierInverseImg(Mat fourier, Mat filtered)
 {
-	cv::Mat inverseTransform;
-	cv::dft(filtered, inverseTransform, cv::DFT_INVERSE|cv::DFT_REAL_OUTPUT);
-    normalize(inverseTransform, inverseTransform, 0, 1, CV_MINMAX);
-	return inverseTransform;
+		Mat res;
+		Mat img = getOrgImage();
+
+		cv::mulSpectrums(fourier,filtered,res,DFT_COMPLEX_OUTPUT);		
+		idft(res,res,DFT_COMPLEX_OUTPUT,img.rows);
+
+		Mat padded;
+		copyMakeBorder(img, padded, 0, img.rows, 0, img.cols, BORDER_CONSTANT, Scalar::all(0));
+		Mat planes[] = {Mat_<float>(padded), Mat::zeros(padded.size(), CV_32F)};
+		split(res, planes);
+		magnitude(planes[0], planes[1], planes[0]);
+		Mat mag = planes[0];
+		mag += Scalar::all(1);
+		log(mag, mag);
+
+		// crop the spectrum, if it has an odd number of rows or columns
+		mag = mag(Rect(0, 0, mag.cols & -2, mag.rows & -2));
+
+		int cx = mag.cols/2;
+		int cy = mag.rows/2;
+
+		normalize(mag, mag, 1, 0, CV_MINMAX);
+
+		//cv::Mat croped = mag(cv::Rect(cx, cy, img.cols,img.rows));
+		//cv::threshold(croped , croped , 0.56, 1, cv::THRESH_BINARY);
+
+		//imshow("fftPLUShpf", mag);
+		//imshow("cropedBinary", croped);
+
+
+		return mag;
 }
 
 

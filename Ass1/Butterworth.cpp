@@ -7,6 +7,7 @@
 
 using namespace cv;
 
+
 static double CalcButterworth(int i, int j, Point center, int D0, int n)
 {
 	//double distance = D(i,j,center);
@@ -15,33 +16,23 @@ static double CalcButterworth(int i, int j, Point center, int D0, int n)
 	return ans;
 }
 
-static Mat CreateButterworthLowFilter(Mat fourier, int D0, int n)
+static Mat CreateButterworthLowFilter(Size size, Point center, int D0, int n)
 {
-	int height = fourier.rows;
-	int length = fourier.cols;
-	Point center = Point(length/2, height/2);
-
-	Mat *ans = new Mat(height,length,CV_32F);
-	for (int i = 0; i < ans->rows; i++)
+	Mat ans = Mat(size, CV_32F);
+	for (int i = 0; i < ans.rows; i++)
 	{
-		for (int j = 0; j < ans->cols; j++)
+		for (int j = 0; j < ans.cols; j++)
 		{
 			double value = CalcButterworth(i,j,center,D0,n); 
-			ans->at<float>(i,j) = value;
+			ans.at<float>(i,j) = value;
 		}
 	}
 
-	 imshow("butterworth low filter"       , *ans   );    // Show the result
-   
-
-	return *ans;
+	return ans;
 	
-	
-	/*Mat ans;
-	return ans;*/
 }
 
-static Mat CreateButterworthHighFilter(Mat fourier, int D0, int n)
+static Mat CreateButterworthHighFilter(Size size, Point center, int D0, int n)
 {
 
 	Mat ans;

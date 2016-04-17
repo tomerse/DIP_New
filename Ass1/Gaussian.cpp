@@ -6,6 +6,7 @@
 //#include "Distance.cpp"
 using namespace cv;
 
+
 static double CalcGaussian(int i, int j, Point center, int D0)
 {
 	//double distance = D(i,j,center);
@@ -15,33 +16,24 @@ static double CalcGaussian(int i, int j, Point center, int D0)
 	return ans;
 }
 
-static Mat CreateGaussianLowFilter(Mat fourier, int D0)
+static Mat CreateGaussianLowFilter(Size size, Point center, int D0)
 {
-	int height = fourier.rows;
-	int length = fourier.cols;
-	Point center = Point(length/2, height/2);
-
-	Mat *ans = new Mat(height,length,CV_32F);
-	for (int i = 0; i < ans->rows; i++)
+	Mat ans(size, CV_32F);
+	for (int i = 0; i < ans.rows; i++)
 	{
-		for (int j = 0; j < ans->cols; j++)
+		for (int j = 0; j < ans.cols; j++)
 		{	
 			double value = CalcGaussian(i,j,center,D0);
-			ans->at<float>(i,j) = value;
+			ans.at<float>(i,j) = value;
 		}
 	}
 
-	 imshow("gaussian low filter"       , *ans   );    // Show the result
-   
+	return ans;
 
-	return *ans;
-	/*Mat ans;
-	return ans;*/
 }
 
-static Mat CreateGaussianHighFilter(Mat fourier, int D0)
+static Mat CreateGaussianHighFilter(Size size, Point center, int D0)
 {
 		Mat ans;
 	return ans;
 }
-
