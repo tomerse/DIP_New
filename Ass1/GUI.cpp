@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <Windows.h>
 #include <msclr\marshal_cppstd.h>
+#include <algorithm>
 
 #include <opencv2\core\core.hpp>
 #include <opencv2\highgui\highgui.hpp>
@@ -23,25 +24,31 @@ using namespace System::Drawing;
 
 int main(int argc, char **argv)
 {
-	/*
+	
 	if( argc != 2)
     {
      cout <<" Usage: display_image ImageToLoadAndDisplay" << endl;
      return -1;
     }
 
-	const char* filename = argv[1];
-	*/
 
-	
+	Mat org;
+	System::String ^path = gcnew System::String(argv[1]);
+	std::string unmanagedPath = msclr::interop::marshal_as<std::string>(path);
+	org = imread(unmanagedPath, CV_LOAD_IMAGE_GRAYSCALE);
+
+	if (!org.data)
+	{
+		throw exception("Could not open or find the image");
+	}
+	int maxD0 = sqrt(pow(org.rows/2, 2) + pow(org.cols/2, 2));
 	GUI^ win = gcnew GUI();
-	
-	//win->pb_org->ImageLocation=(System::String^)argv[1];
-	win->pb_org->ImageLocation="C:\\Users\\Tomer\\Desktop\\New folder\\lena.jpg";
+	win->setD0Max(maxD0);
+	win->pb_org->ImageLocation = gcnew System::String(argv[1]);
 	win->tb_d0->Value = (win->tb_d0->Maximum -  win->tb_d0->Minimum)/2;
 	win->tb_n->Value = (win->tb_n->Maximum -  win->tb_n->Minimum)/2;
 
-	Mat org = win->getOrgImage();
+	org = win->getOrgImage();
 	imshow("Input Image"       , org   );
 	win->ShowDialog();
   
@@ -55,6 +62,12 @@ void GUI::ApplyChanges()
 	int n = tb_n->Value;
 	createImages(filter, settings, d0, n);
 
+}
+
+void GUI::setD0Max(int max)
+{
+	tb_d0->Maximum = max;
+	D0_max->Text = max.ToString();
 }
 
 int GUI::getFilter()
@@ -80,9 +93,6 @@ void GUI::createImages(int filter, int settings, int d0, int n)
 {
 	Mat org = getOrgImage();   
 	
-	WidthPadded=org.cols*2;
-	HeightPadded=org.rows*2;
-	
 	int M = getOptimalDFTSize( org.rows );
 
 	Mat fourier = CreateFourierImg(org);
@@ -92,6 +102,7 @@ void GUI::createImages(int filter, int settings, int d0, int n)
 	cv::Size size = cv::Size(width, height);
 
 	Mat filtered = CreateFilterImg(size, filter, settings, d0, n);
+	//imshow("fourier filtered Image", filtered);
 
 	Mat fourierInverse =  CreateFourierInverseImg(fourier,filtered);
 	imshow("Inverse Transform Image"       , fourierInverse   ); 
@@ -212,7 +223,7 @@ Mat GUI::CreateFilterImg(cv::Size size, int filter, int settings, int d0, int n)
 
 		
 		imshow("Filter", filterImg);
-
+		
 		normalize(filterImg, filterImg, 0, 1, CV_MINMAX);
 		Mat padded;
 		copyMakeBorder(filterImg, padded, 0, size.height - filterImg.rows, 0, size.width - filterImg.cols, BORDER_CONSTANT, Scalar::all(0));
@@ -224,13 +235,12 @@ Mat GUI::CreateFilterImg(cv::Size size, int filter, int settings, int d0, int n)
 
 }
 
-
 Mat GUI::CreateFourierInverseImg(Mat fourier, Mat filtered)
 {
 		Mat res;
 		Mat img = getOrgImage();
 
-		cv::mulSpectrums(fourier,filtered,res,DFT_COMPLEX_OUTPUT);		
+		cv::mulSpectrums(fourier,filtered,res,DFT_COMPLEX_OUTPUT);
 		idft(res,res,DFT_COMPLEX_OUTPUT,img.rows);
 
 		Mat padded;

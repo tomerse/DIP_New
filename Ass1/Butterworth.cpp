@@ -34,8 +34,14 @@ static Mat CreateButterworthLowFilter(Size size, Point center, int D0, int n)
 
 static Mat CreateButterworthHighFilter(Size size, Point center, int D0, int n)
 {
-
-	Mat ans;
+	Mat ans = CreateButterworthLowFilter(size, center, D0, n);
+	for (int i = 0; i < ans.rows; i++)
+	{
+		for (int j = 0; j < ans.cols; j++)
+		{
+			ans.at<float>(i, j) = 1 - ans.at<float>(i, j);
+		}
+	}
 	return ans;
 }
 

@@ -34,6 +34,13 @@ static Mat CreateGaussianLowFilter(Size size, Point center, int D0)
 
 static Mat CreateGaussianHighFilter(Size size, Point center, int D0)
 {
-		Mat ans;
+	Mat ans = CreateGaussianLowFilter(size, center, D0);
+	for (int i = 0; i < ans.rows; i++)
+	{
+		for (int j = 0; j < ans.cols; j++)
+		{
+			ans.at<float>(i, j) = 1 - ans.at<float>(i, j);
+		}
+	}
 	return ans;
 }

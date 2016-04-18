@@ -30,17 +30,17 @@ namespace Ass1 {
 		void ApplyChanges();
 		int getFilter();
 		int getSettings();
+		void setD0Max(int max);
 		void createImages(int filter, int settings, int d0, int n);
 		Mat CreateFourierImg(Mat org);
 		Mat CreateFilterImg(cv::Size size, int filter, int settings, int d0, int n);
 		Mat CreateFourierInverseImg(Mat fourier, Mat filtered);
-		int WidthPadded;
-		int HeightPadded;
+	private: System::Windows::Forms::ToolTip^  toolTip1;
+	private: System::Windows::Forms::ToolTip^  toolTip2;
+	public: 
 		GUI(void)
 		{
 			InitializeComponent();
-			WidthPadded = 0;
-			HeightPadded = 0;
 		}
 
 	protected:
@@ -84,13 +84,14 @@ namespace Ass1 {
 	private: System::Windows::Forms::Label^  label10;
 	public: System::Windows::Forms::TrackBar^  tb_n;
 	private: System::Windows::Forms::Label^  label1;
+	private: System::ComponentModel::IContainer^  components;
 
 
 	private:
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-		System::ComponentModel::Container ^components;
+
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -99,6 +100,7 @@ namespace Ass1 {
 		/// </summary>
 		void InitializeComponent(void)
 		{
+			this->components = (gcnew System::ComponentModel::Container());
 			this->pb_org = (gcnew System::Windows::Forms::PictureBox());
 			this->panel1 = (gcnew System::Windows::Forms::Panel());
 			this->rb_high = (gcnew System::Windows::Forms::RadioButton());
@@ -121,6 +123,8 @@ namespace Ass1 {
 			this->label10 = (gcnew System::Windows::Forms::Label());
 			this->tb_n = (gcnew System::Windows::Forms::TrackBar());
 			this->label1 = (gcnew System::Windows::Forms::Label());
+			this->toolTip1 = (gcnew System::Windows::Forms::ToolTip(this->components));
+			this->toolTip2 = (gcnew System::Windows::Forms::ToolTip(this->components));
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pb_org))->BeginInit();
 			this->panel1->SuspendLayout();
 			this->panel2->SuspendLayout();
@@ -292,7 +296,8 @@ namespace Ass1 {
 			this->tb_d0->Name = L"tb_d0";
 			this->tb_d0->Size = System::Drawing::Size(139, 45);
 			this->tb_d0->TabIndex = 1;
-			this->tb_d0->Value = 1;
+			this->tb_d0->Value = 300;
+			this->tb_d0->Scroll += gcnew System::EventHandler(this, &GUI::tb_d0_Scroll);
 			// 
 			// panel4
 			// 
@@ -340,6 +345,7 @@ namespace Ass1 {
 			this->tb_n->Size = System::Drawing::Size(139, 45);
 			this->tb_n->TabIndex = 1;
 			this->tb_n->Value = 5;
+			this->tb_n->Scroll += gcnew System::EventHandler(this, &GUI::tb_n_Scroll);
 			// 
 			// label1
 			// 
@@ -383,5 +389,11 @@ namespace Ass1 {
 	private: System::Void bt_filter_Click(System::Object^  sender, System::EventArgs^  e) {
 				 ApplyChanges();
 			 }
+private: System::Void tb_d0_Scroll(System::Object^  sender, System::EventArgs^  e) {
+			 toolTip1->SetToolTip(tb_d0, tb_d0->Value.ToString());
+		 }
+private: System::Void tb_n_Scroll(System::Object^  sender, System::EventArgs^  e) {
+			 toolTip2->SetToolTip(tb_n, tb_n->Value.ToString());
+		 }
 };
 }
