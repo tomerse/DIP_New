@@ -31,10 +31,11 @@ namespace Ass1 {
 		int getFilter();
 		int getSettings();
 		void setD0Max(int max);
-		void createImages(int filter, int settings, int d0, int n);
+		void CreateImages(int filter, int settings, int d0, int n);
 		Mat CreateFourierImg(Mat org);
 		Mat CreateFilterImg(cv::Size size, int filter, int settings, int d0, int n);
 		Mat CreateFourierInverseImg(Mat fourier, Mat filtered);
+		void ShowSpectrumImage(Mat complex, std::string name, bool shift);
 	private: System::Windows::Forms::ToolTip^  toolTip1;
 	private: System::Windows::Forms::ToolTip^  toolTip2;
 	public: 

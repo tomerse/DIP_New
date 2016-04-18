@@ -60,7 +60,7 @@ void GUI::ApplyChanges()
 	int settings = getSettings();
 	int d0 = tb_d0->Value;
 	int n = tb_n->Value;
-	createImages(filter, settings, d0, n);
+	CreateImages(filter, settings, d0, n);
 
 }
 
@@ -89,23 +89,25 @@ int GUI::getSettings()
 			return 3;
 }
 
-void GUI::createImages(int filter, int settings, int d0, int n)
+void GUI::CreateImages(int filter, int settings, int d0, int n)
 {
 	Mat org = getOrgImage();   
 	
 	int M = getOptimalDFTSize( org.rows );
 
 	Mat fourier = CreateFourierImg(org);
+	ShowSpectrumImage(fourier, "Input Fourier Transform", true);
+
 
 	int height = fourier.rows;
 	int width = fourier.cols;
 	cv::Size size = cv::Size(width, height);
 
 	Mat filtered = CreateFilterImg(size, filter, settings, d0, n);
-	//imshow("fourier filtered Image", filtered);
 
 	Mat fourierInverse =  CreateFourierInverseImg(fourier,filtered);
 	imshow("Inverse Transform Image"       , fourierInverse   ); 
+	
 
 }
 
@@ -131,52 +133,57 @@ Mat GUI::CreateFourierImg(Mat org)
     int m = getOptimalDFTSize( org.rows );
     int n = getOptimalDFTSize( org.cols ); // on the border add zero values
 	copyMakeBorder(org, padded, 0, m - org.rows, 0, n - org.cols, BORDER_CONSTANT, Scalar::all(0));
-    //copyMakeBorder(org, padded, 0, HeightPadded - org.rows, 0, WidthPadded - org.cols, BORDER_CONSTANT, Scalar::all(0));
 
     Mat planes[] = {Mat_<float>(padded), Mat::zeros(padded.size(), CV_32F)};
     Mat complexI;
     merge(planes, 2, complexI);         // Add to the expanded another plane with zeros
 
-    dft(complexI, complexI);            // this way the result may fit in the source matrix
+	dft(complexI, complexI, DFT_COMPLEX_OUTPUT);            // this way the result may fit in the source matrix
+	
+	return complexI;
+}
 
-    // compute the magnitude and switch to logarithmic scale
+void GUI::ShowSpectrumImage(Mat complex, string name, bool shift)
+{
+    Mat planes[] = {
+        Mat::zeros(complex.size(), CV_32F),
+        Mat::zeros(complex.size(), CV_32F)
+    };
+	 // compute the magnitude and switch to logarithmic scale
     // => log(1 + sqrt(Re(DFT(I))^2 + Im(DFT(I))^2))
-    split(complexI, planes);                   // planes[0] = Re(DFT(I), planes[1] = Im(DFT(I))
+    split(complex, planes);                   // planes[0] = Re(DFT(I), planes[1] = Im(DFT(I))
     magnitude(planes[0], planes[1], planes[0]);// planes[0] = magnitude
     Mat magI = planes[0];
 
     magI += Scalar::all(1);                    // switch to logarithmic scale
     log(magI, magI);
-
-    // crop the spectrum, if it has an odd number of rows or columns
-    magI = magI(Rect(0, 0, magI.cols & -2, magI.rows & -2));
+	if (shift)
+	{
+		// crop the spectrum, if it has an odd number of rows or columns
+		magI = magI(Rect(0, 0, magI.cols & -2, magI.rows & -2));
 	
-    // rearrange the quadrants of Fourier image  so that the origin is at the image center
-    int cx = magI.cols/2;
-    int cy = magI.rows/2;
+		// rearrange the quadrants of Fourier image  so that the origin is at the image center
+		int cx = magI.cols/2;
+		int cy = magI.rows/2;
 
-    Mat q0(magI, Rect(0, 0, cx, cy));   // Top-Left - Create a ROI per quadrant
-    Mat q1(magI, Rect(cx, 0, cx, cy));  // Top-Right
-    Mat q2(magI, Rect(0, cy, cx, cy));  // Bottom-Left
-    Mat q3(magI, Rect(cx, cy, cx, cy)); // Bottom-Right
+		Mat q0(magI, Rect(0, 0, cx, cy));   // Top-Left - Create a ROI per quadrant
+		Mat q1(magI, Rect(cx, 0, cx, cy));  // Top-Right
+		Mat q2(magI, Rect(0, cy, cx, cy));  // Bottom-Left
+		Mat q3(magI, Rect(cx, cy, cx, cy)); // Bottom-Right
 
-    Mat tmp;                           // swap quadrants (Top-Left with Bottom-Right)
-    q0.copyTo(tmp);
-    q3.copyTo(q0);
-    tmp.copyTo(q3);
+		Mat tmp;                           // swap quadrants (Top-Left with Bottom-Right)
+		q0.copyTo(tmp);
+		q3.copyTo(q0);
+		tmp.copyTo(q3);
 
-    q1.copyTo(tmp);                    // swap quadrant (Top-Right with Bottom-Left)
-    q2.copyTo(q1);
-    tmp.copyTo(q2);
-	
+		q1.copyTo(tmp);                    // swap quadrant (Top-Right with Bottom-Left)
+		q2.copyTo(q1);
+		tmp.copyTo(q2);
+	}
     normalize(magI, magI, 0, 1, CV_MINMAX); // Transform the matrix with float values into a
                                             // viewable image form (float between values 0 and 1).
 
-
-	imshow("Fourier Transform", magI);
-	return complexI;
-	//return magI;
-
+	imshow(name, magI);
 }
 
 Mat GUI::CreateFilterImg(cv::Size size, int filter, int settings, int d0, int n)
@@ -241,6 +248,7 @@ Mat GUI::CreateFourierInverseImg(Mat fourier, Mat filtered)
 		Mat img = getOrgImage();
 
 		cv::mulSpectrums(fourier,filtered,res,DFT_COMPLEX_OUTPUT);
+		ShowSpectrumImage(res, "Filter", false);
 		idft(res,res,DFT_COMPLEX_OUTPUT,img.rows);
 
 		Mat padded;
@@ -249,22 +257,31 @@ Mat GUI::CreateFourierInverseImg(Mat fourier, Mat filtered)
 		split(res, planes);
 		magnitude(planes[0], planes[1], planes[0]);
 		Mat mag = planes[0];
+
+	
+
+
+/*
 		mag += Scalar::all(1);
 		log(mag, mag);
-
+		
 		// crop the spectrum, if it has an odd number of rows or columns
 		mag = mag(Rect(0, 0, mag.cols & -2, mag.rows & -2));
 
 		int cx = mag.cols/2;
 		int cy = mag.rows/2;
 
+
+		*/
+
+
 		normalize(mag, mag, 1, 0, CV_MINMAX);
 
-		//cv::Mat croped = mag(cv::Rect(cx, cy, img.cols,img.rows));
-		//cv::threshold(croped , croped , 0.56, 1, cv::THRESH_BINARY);
+		/*cv::Mat croped = mag(cv::Rect(cx, cy, img.cols,img.rows));
+		cv::threshold(croped , croped , 0.56, 1, cv::THRESH_BINARY);
 
-		//imshow("fftPLUShpf", mag);
-		//imshow("cropedBinary", croped);
+		imshow("fftPLUShpf", mag);
+		imshow("cropedBinary", croped);*/
 
 
 		return mag;
