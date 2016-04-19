@@ -35,7 +35,8 @@ namespace Ass1 {
 		Mat CreateFourierImg(Mat org);
 		Mat CreateFilterImg(cv::Size size, int filter, int settings, int d0, int n);
 		Mat CreateFourierInverseImg(Mat fourier, Mat filtered);
-		void ShowSpectrumImage(Mat complex, std::string name, bool shift);
+		void ShowImage(Mat complex, std::string name, bool shift);
+		void SwapQuadrants(Mat magI);
 	private: System::Windows::Forms::ToolTip^  toolTip1;
 	private: System::Windows::Forms::ToolTip^  toolTip2;
 	public: 
@@ -318,7 +319,7 @@ namespace Ass1 {
 			this->n_max->Name = L"n_max";
 			this->n_max->Size = System::Drawing::Size(19, 13);
 			this->n_max->TabIndex = 5;
-			this->n_max->Text = L"10";
+			this->n_max->Text = L"20";
 			// 
 			// n_min
 			// 
@@ -341,6 +342,7 @@ namespace Ass1 {
 			// tb_n
 			// 
 			this->tb_n->Location = System::Drawing::Point(40, 2);
+			this->tb_n->Maximum = 20;
 			this->tb_n->Minimum = 1;
 			this->tb_n->Name = L"tb_n";
 			this->tb_n->Size = System::Drawing::Size(139, 45);

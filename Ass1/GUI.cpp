@@ -20,8 +20,6 @@ using namespace System::Drawing;
 
 
 
-
-
 int main(int argc, char **argv)
 {
 	
@@ -92,11 +90,9 @@ int GUI::getSettings()
 void GUI::CreateImages(int filter, int settings, int d0, int n)
 {
 	Mat org = getOrgImage();   
-	
-	int M = getOptimalDFTSize( org.rows );
 
 	Mat fourier = CreateFourierImg(org);
-	ShowSpectrumImage(fourier, "Input Fourier Transform", true);
+	ShowImage(fourier, "Input Fourier Transform", true);
 
 
 	int height = fourier.rows;
@@ -143,7 +139,31 @@ Mat GUI::CreateFourierImg(Mat org)
 	return complexI;
 }
 
-void GUI::ShowSpectrumImage(Mat complex, string name, bool shift)
+void GUI::SwapQuadrants(Mat mat)
+{
+	// crop the spectrum, if it has an odd number of rows or columns
+		mat = mat(Rect(0, 0, mat.cols & -2, mat.rows & -2));
+	
+		// rearrange the quadrants of Fourier image  so that the origin is at the image center
+		int cx = mat.cols/2;
+		int cy = mat.rows/2;
+
+		Mat q0(mat, Rect(0, 0, cx, cy));   // Top-Left - Create a ROI per quadrant
+		Mat q1(mat, Rect(cx, 0, cx, cy));  // Top-Right
+		Mat q2(mat, Rect(0, cy, cx, cy));  // Bottom-Left
+		Mat q3(mat, Rect(cx, cy, cx, cy)); // Bottom-Right
+
+		Mat tmp;                           // swap quadrants (Top-Left with Bottom-Right)
+		q0.copyTo(tmp);
+		q3.copyTo(q0);
+		tmp.copyTo(q3);
+
+		q1.copyTo(tmp);                    // swap quadrant (Top-Right with Bottom-Left)
+		q2.copyTo(q1);
+		tmp.copyTo(q2);
+}
+
+void GUI::ShowImage(Mat complex, string name, bool shift)
 {
     Mat planes[] = {
         Mat::zeros(complex.size(), CV_32F),
@@ -158,28 +178,7 @@ void GUI::ShowSpectrumImage(Mat complex, string name, bool shift)
     magI += Scalar::all(1);                    // switch to logarithmic scale
     log(magI, magI);
 	if (shift)
-	{
-		// crop the spectrum, if it has an odd number of rows or columns
-		magI = magI(Rect(0, 0, magI.cols & -2, magI.rows & -2));
-	
-		// rearrange the quadrants of Fourier image  so that the origin is at the image center
-		int cx = magI.cols/2;
-		int cy = magI.rows/2;
-
-		Mat q0(magI, Rect(0, 0, cx, cy));   // Top-Left - Create a ROI per quadrant
-		Mat q1(magI, Rect(cx, 0, cx, cy));  // Top-Right
-		Mat q2(magI, Rect(0, cy, cx, cy));  // Bottom-Left
-		Mat q3(magI, Rect(cx, cy, cx, cy)); // Bottom-Right
-
-		Mat tmp;                           // swap quadrants (Top-Left with Bottom-Right)
-		q0.copyTo(tmp);
-		q3.copyTo(q0);
-		tmp.copyTo(q3);
-
-		q1.copyTo(tmp);                    // swap quadrant (Top-Right with Bottom-Left)
-		q2.copyTo(q1);
-		tmp.copyTo(q2);
-	}
+		SwapQuadrants(magI);
     normalize(magI, magI, 0, 1, CV_MINMAX); // Transform the matrix with float values into a
                                             // viewable image form (float between values 0 and 1).
 
@@ -227,9 +226,6 @@ Mat GUI::CreateFilterImg(cv::Size size, int filter, int settings, int d0, int n)
 						filterImg = CreateGaussianHighFilter(size, center, d0);
 					}
 		}
-
-		
-		imshow("Filter", filterImg);
 		
 		normalize(filterImg, filterImg, 0, 1, CV_MINMAX);
 		Mat padded;
@@ -237,6 +233,11 @@ Mat GUI::CreateFilterImg(cv::Size size, int filter, int settings, int d0, int n)
 		Mat planes[] = { Mat_<float>(padded), Mat::zeros(padded.size(), CV_32F) };
 		Mat complexImg;
 		merge(planes, 2, complexImg);
+		complexImg += Scalar::all(1);
+		log(complexImg, complexImg);
+		SwapQuadrants(complexImg);
+		normalize(complexImg, complexImg, 1, 0, NORM_INF);
+
 
 		return complexImg;
 
@@ -246,10 +247,11 @@ Mat GUI::CreateFourierInverseImg(Mat fourier, Mat filtered)
 {
 		Mat res;
 		Mat img = getOrgImage();
+		
+		cv::mulSpectrums(fourier,filtered,res,DFT_ROWS);
 
-		cv::mulSpectrums(fourier,filtered,res,DFT_COMPLEX_OUTPUT);
-		ShowSpectrumImage(res, "Filter", false);
-		idft(res,res,DFT_COMPLEX_OUTPUT,img.rows);
+		ShowImage(res, "Filter", true);
+		idft(res,res,DFT_COMPLEX_OUTPUT);
 
 		Mat padded;
 		copyMakeBorder(img, padded, 0, img.rows, 0, img.cols, BORDER_CONSTANT, Scalar::all(0));
@@ -257,11 +259,7 @@ Mat GUI::CreateFourierInverseImg(Mat fourier, Mat filtered)
 		split(res, planes);
 		magnitude(planes[0], planes[1], planes[0]);
 		Mat mag = planes[0];
-
-	
-
-
-/*
+		/*
 		mag += Scalar::all(1);
 		log(mag, mag);
 		
@@ -270,19 +268,8 @@ Mat GUI::CreateFourierInverseImg(Mat fourier, Mat filtered)
 
 		int cx = mag.cols/2;
 		int cy = mag.rows/2;
-
-
 		*/
-
-
 		normalize(mag, mag, 1, 0, CV_MINMAX);
-
-		/*cv::Mat croped = mag(cv::Rect(cx, cy, img.cols,img.rows));
-		cv::threshold(croped , croped , 0.56, 1, cv::THRESH_BINARY);
-
-		imshow("fftPLUShpf", mag);
-		imshow("cropedBinary", croped);*/
-
 
 		return mag;
 }
